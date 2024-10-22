@@ -15,7 +15,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 // HTTP connection to the API
 const httpLink = new HttpLink({
   uri: 'http://localhost:8889/graphql',
-  credentials: 'omit' // 'omit' is safer for development
+  credentials: 'omit'
 });
 
 // Initialize Apollo Client
@@ -24,7 +24,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
   defaultOptions: {
     query: {
-      fetchPolicy: 'network-only', // Doesn't check cache before making a request
+      fetchPolicy: 'network-only',
       errorPolicy: 'all'
     }
   }
