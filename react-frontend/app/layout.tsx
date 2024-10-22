@@ -1,28 +1,20 @@
-import { Metadata } from 'next'
-import { Inter } from "next/font/google";
-import { ApolloProvider } from "@apollo/client";
-import client from "../lib/apollo-client";
+'use client';
 
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-});
-
-export const metadata: Metadata = {
-  title: "Zillow Clone",
-  description: "A modern real estate platform built with Next.js and WordPress",
-};
+import { ApolloProvider } from '@apollo/client';
+import client from '../lib/apollo-client';
+import "./globals.css";
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en">
       <body>
-        <ApolloProvider client={client}>{children}</ApolloProvider>
+        <ApolloProvider client={client}>
+          {children}
+        </ApolloProvider>
       </body>
     </html>
   );

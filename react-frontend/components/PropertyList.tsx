@@ -17,6 +17,10 @@ const TEST_QUERY = gql`
 export default function PropertyList() {
   const { loading, error, data } = useQuery(TEST_QUERY);
 
+  console.log('Loading:', loading);
+  console.log('Error:', error);
+  console.log('Data:', data);
+
   if (loading) {
     return (
       <div className="p-4 bg-blue-50 rounded">

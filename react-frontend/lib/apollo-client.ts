@@ -1,7 +1,11 @@
 import { ApolloClient, InMemoryCache, HttpLink, from } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 
-// Error handling link
+const httpLink = new HttpLink({
+  uri: 'http://localhost:8889/graphql',
+  credentials: 'omit'
+});
+
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
     graphQLErrors.forEach(({ message, locations, path }) =>
@@ -12,13 +16,6 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
-// HTTP connection to the API
-const httpLink = new HttpLink({
-  uri: 'http://localhost:8889/graphql',
-  credentials: 'omit'
-});
-
-// Initialize Apollo Client
 const client = new ApolloClient({
   link: from([errorLink, httpLink]),
   cache: new InMemoryCache(),

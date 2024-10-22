@@ -1,6 +1,5 @@
-// Remove 'use client' from this file
 import type { Metadata } from "next";
-import PropertyList from '../components/PropertyList';  // We'll create this next
+import PropertyList from '../components/PropertyList';
 
 export const metadata: Metadata = {
   title: "Zillow Clone",
