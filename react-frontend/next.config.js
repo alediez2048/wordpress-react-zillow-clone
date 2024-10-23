@@ -3,7 +3,7 @@ const nextConfig = {
     output: 'standalone',
     images: {
       domains: ['localhost'],
-      unoptimized: true, // Add this for static exports
+      unoptimized: true,
       remotePatterns: [
         {
           protocol: 'http',
@@ -22,3 +22,4 @@ const nextConfig = {
   }
   
   module.exports = nextConfig
+  

@@ -36,6 +36,7 @@ const TEST_QUERY = gql`
   }
 `;
 
+
 export default function PropertyList() {
   const { loading, error, data } = useQuery(TEST_QUERY);
   const [selectedProperty, setSelectedProperty] = useState(null);
@@ -57,11 +58,25 @@ export default function PropertyList() {
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 rounded-lg">
-        <p className="text-red-500">Error: {error.message}</p>
+      <div className="flex flex-col items-center justify-center p-8">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-2xl w-full">
+          <h2 className="text-xl font-semibold text-yellow-800 mb-2">
+            Temporarily Unable to Load Properties
+          </h2>
+          <p className="text-yellow-700 mb-4">
+            We&apos;re currently experiencing some technical difficulties. Please try again later.
+          </p>
+          <p className="text-sm text-yellow-600">
+            If this persists, please contact support.
+          </p>
+        </div>
       </div>
     );
   }
+
+  // ... rest of your component code
+}
+
 
   return (
     <>
