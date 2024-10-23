@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import PropertyModal from './PropertyModal';
 
@@ -25,6 +25,11 @@ const TEST_QUERY = gql`
 export default function PropertyList() {
   const { loading, error, data } = useQuery(TEST_QUERY);
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   if (loading) {
     return (
@@ -61,7 +66,7 @@ export default function PropertyList() {
               className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
               onClick={() => setSelectedProperty(property)}
             >
-              {/* Property Card Content (same as before) */}
+              {/* Image Section */}
               <div className="relative h-48 bg-gray-200">
                 {property.featuredImage ? (
                   <img
@@ -76,6 +81,7 @@ export default function PropertyList() {
                 )}
               </div>
 
+              {/* Content Section */}
               <div className="p-4">
                 <div className="text-2xl font-bold text-gray-900 mb-2">
                   ${Number(price).toLocaleString()}
@@ -90,6 +96,17 @@ export default function PropertyList() {
                 </div>
 
                 <h3 className="font-medium text-gray-900 mb-1">{property.title}</h3>
+                
+                {/* Only render the date client-side */}
+                {isClient && (
+                  <p className="text-sm text-gray-500">
+                    Listed {new Date(property.date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                )}
               </div>
             </div>
           );
