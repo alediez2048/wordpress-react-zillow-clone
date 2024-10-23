@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    output: 'standalone',
     images: {
+      domains: ['localhost'],
+      unoptimized: true, // Add this for static exports
       remotePatterns: [
         {
           protocol: 'http',
@@ -11,10 +14,10 @@ const nextConfig = {
       ],
     },
     typescript: {
-      ignoreBuildErrors: true, // Temporarily ignore TypeScript errors during build
+      ignoreBuildErrors: true,
     },
     eslint: {
-      ignoreDuringBuilds: true, // Temporarily ignore ESLint errors during build
+      ignoreDuringBuilds: true,
     },
   }
   

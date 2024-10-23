@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache, HttpLink, from } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:8889/graphql',
+  uri: process.env.NEXT_PUBLIC_WORDPRESS_URL || 'http://localhost:8889/graphql',
   credentials: 'omit'
 });
 
