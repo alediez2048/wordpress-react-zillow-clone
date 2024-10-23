@@ -2,7 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
+import Image from 'next/image';
 import PropertyModal from './PropertyModal';
+
+interface Property {
+  id: string;
+  title: string;
+  date: string;
+  content: string;
+  featuredImage?: {
+    node: {
+      sourceUrl: string;
+    };
+  };
+}
+
 
 const TEST_QUERY = gql`
   query TestQuery {

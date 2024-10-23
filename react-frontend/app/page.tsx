@@ -101,8 +101,8 @@ export default function Home() {
               {[
                 { name: "Sarah L.", review: "Zillow Rentals made finding my new apartment a breeze. The notifications were spot-on, and I could message the landlord directly through the app!" },
                 { name: "Mike T.", review: "I love how easy it is to filter rentals based on my exact needs. Found my dream place in just a few days!" },
-                { name: "Emily R.", review: "The map feature is fantastic! It helped me find a great neighborhood that I wouldn't have considered otherwise." },
-              ].map((testimonial, index) => (
+                { name: "Emily R.", review: "The map feature is fantastic! It helped me find a great neighborhood that I wouldn&apos;t have considered otherwise." },
+                ].map((testimonial, index) => (
                 <div key={index} className="bg-white rounded-lg shadow-lg p-6">
                   <div className="flex mb-4">
                     {[...Array(5)].map((_, i) => (
