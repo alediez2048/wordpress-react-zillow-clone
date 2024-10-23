@@ -2,21 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
-import Image from 'next/image';
 import PropertyModal from './PropertyModal';
-
-interface Property {
-  id: string;
-  title: string;
-  date: string;
-  content: string;
-  featuredImage?: {
-    node: {
-      sourceUrl: string;
-    };
-  };
-}
-
 
 const TEST_QUERY = gql`
   query TestQuery {
@@ -35,7 +21,6 @@ const TEST_QUERY = gql`
     }
   }
 `;
-
 
 export default function PropertyList() {
   const { loading, error, data } = useQuery(TEST_QUERY);
@@ -73,10 +58,6 @@ export default function PropertyList() {
       </div>
     );
   }
-
-  // ... rest of your component code
-}
-
 
   return (
     <>
@@ -126,7 +107,6 @@ export default function PropertyList() {
 
                 <h3 className="font-medium text-gray-900 mb-1">{property.title}</h3>
                 
-                {/* Only render the date client-side */}
                 {isClient && (
                   <p className="text-sm text-gray-500">
                     Listed {new Date(property.date).toLocaleDateString('en-US', {
