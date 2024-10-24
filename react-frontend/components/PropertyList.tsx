@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
-import PropertyModal from './PropertyModal';
+import Image from 'next/image';
 
-const TEST_QUERY = gql`
-  query TestQuery {
+const GET_POSTS = gql`
+  query GetPosts {
     posts {
       nodes {
         id
@@ -15,6 +14,7 @@ const TEST_QUERY = gql`
         featuredImage {
           node {
             sourceUrl
+            altText
           }
         }
       }
@@ -23,113 +23,104 @@ const TEST_QUERY = gql`
 `;
 
 export default function PropertyList() {
-  const { loading, error, data } = useQuery(TEST_QUERY);
-  const [selectedProperty, setSelectedProperty] = useState(null);
-  const [isClient, setIsClient] = useState(false);
+  const { loading, error, data } = useQuery(GET_POSTS);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const extractDetails = (content: string) => {
+    const priceMatch = content.match(/Price:\s*\$([0-9,]+)/);
+    const bedroomsMatch = content.match(/Bedrooms:\s*(\d+)/);
+    const bathroomsMatch = content.match(/Bathrooms:\s*(\d+)/);
+    const sqftMatch = content.match(/Square Feet:\s*([0-9,]+)/);
+    
+    return {
+      price: priceMatch ? priceMatch[1].replace(/,/g, '') : '0',
+      beds: bedroomsMatch ? bedroomsMatch[1] : '0',
+      baths: bathroomsMatch ? bathroomsMatch[1] : '0',
+      sqft: sqftMatch ? sqftMatch[1].replace(/,/g, '') : '0',
+      description: content.replace(/Price:.*Square Feet:[^\n]*\n*/s, '').trim()
+    };
+  };
+
+  const formatPrice = (price: string) => {
+    const numPrice = parseInt(price, 10);
+    return !isNaN(numPrice) 
+      ? `$${numPrice.toLocaleString()}`
+      : 'Price on request';
+  };
+
+  const formatSqFt = (sqft: string) => {
+    const numSqft = parseInt(sqft, 10);
+    return !isNaN(numSqft)
+      ? numSqft.toLocaleString()
+      : 'N/A';
+  };
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
-        {[1, 2, 3].map((n) => (
-          <div key={n} className="bg-gray-100 rounded-lg h-80"></div>
-        ))}
+      <div className="p-4 bg-blue-50 rounded">
+        <p>Loading properties...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center p-8">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-2xl w-full">
-          <h2 className="text-xl font-semibold text-yellow-800 mb-2">
-            Temporarily Unable to Load Properties
-          </h2>
-          <p className="text-yellow-700 mb-4">
-            We&apos;re currently experiencing some technical difficulties. Please try again later.
-          </p>
-          <p className="text-sm text-yellow-600">
-            If this persists, please contact support.
-          </p>
-        </div>
+      <div className="p-4 bg-red-50 rounded">
+        <h3 className="text-xl font-semibold text-red-700 mb-2">
+          Temporarily Unable to Load Properties
+        </h3>
+        <p className="text-red-600">
+          We're currently experiencing some technical difficulties. 
+          Please try again later.
+        </p>
       </div>
     );
   }
 
   return (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data?.posts?.nodes.map((property) => {
-          const price = property.content?.match(/Price: \$([0-9,]+)/)?.[1] || '0';
-          const details = {
-            beds: property.content?.match(/Bedrooms: (\d+)/)?.[1] || '0',
-            baths: property.content?.match(/Bathrooms: (\d+)/)?.[1] || '0',
-            sqft: property.content?.match(/Square Feet: ([0-9,]+)/)?.[1] || '0',
-          };
-
-          return (
-            <div 
-              key={property.id} 
-              className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-              onClick={() => setSelectedProperty(property)}
-            >
-              {/* Image Section */}
-              <div className="relative h-48 bg-gray-200">
-                {property.featuredImage ? (
-                  <img
-                    src={property.featuredImage.node.sourceUrl}
-                    alt={property.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-400">No image available</span>
-                  </div>
-                )}
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {data?.posts?.nodes.map((post: any) => {
+        const details = extractDetails(post.content || '');
+        
+        return (
+          <div key={post.id} className="border rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            {post.featuredImage?.node?.sourceUrl ? (
+              <div className="relative w-full h-48">
+                <Image
+                  src={post.featuredImage.node.sourceUrl}
+                  alt={post.featuredImage.node.altText || post.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
               </div>
-
-              {/* Content Section */}
-              <div className="p-4">
-                <div className="text-2xl font-bold text-gray-900 mb-2">
-                  ${Number(price).toLocaleString()}
-                </div>
-
-                <div className="flex items-center gap-4 text-gray-600 mb-3">
-                  <span>{details.beds} bd</span>
-                  <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                  <span>{details.baths} ba</span>
-                  <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                  <span>{Number(details.sqft).toLocaleString()} sqft</span>
-                </div>
-
-                <h3 className="font-medium text-gray-900 mb-1">{property.title}</h3>
-                
-                {isClient && (
-                  <p className="text-sm text-gray-500">
-                    Listed {new Date(property.date).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
-                )}
+            ) : (
+              <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                <span className="text-gray-400">No image available</span>
               </div>
+            )}
+            
+            <div className="p-4">
+              <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
+              <p className="text-2xl font-bold text-blue-600 mb-2">
+                {formatPrice(details.price)}
+              </p>
+              <p className="text-gray-600">
+                {details.beds} bd | {details.baths} ba | {formatSqFt(details.sqft)} sqft
+              </p>
+              <p className="text-gray-600 mt-2 text-sm">
+                {details.description}
+              </p>
+              <p className="text-gray-500 text-sm mt-2">
+                Listed {new Date(post.date).toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}
+              </p>
             </div>
-          );
-        })}
-      </div>
-
-      {/* Modal */}
-      {selectedProperty && (
-        <PropertyModal
-          property={selectedProperty}
-          isOpen={!!selectedProperty}
-          onClose={() => setSelectedProperty(null)}
-        />
-      )}
-    </>
+          </div>
+        );
+      })}
+    </div>
   );
 }
